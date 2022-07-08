@@ -62,9 +62,9 @@ def get_qubo_maxcut(G):
 
     H=np.zeros((n_qubits, n_qubits))
     for pair in list(G.edges()):
-        H[pair[0],pair[0]]+=1
-        H[pair[1],pair[1]]+=1
-        H[pair[0],pair[1]]+=-2
+        H[pair[0],pair[0]]+=-1
+        H[pair[1],pair[1]]+=-1
+        H[pair[0],pair[1]]+=2
     return H
 
 
