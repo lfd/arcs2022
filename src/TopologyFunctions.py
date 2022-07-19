@@ -67,6 +67,36 @@ def get_nx_graph(base_map):
     return g
 
 
+# extract mean execution time for each native gate for a certain IBM-Q-Backend. 
+def get_gate_times_from_backend(backend):
+
+    """
+    returns a dictionary: {gate name, mean gate time, std of mean gate time}
+    """
+
+    config = backend.configuration()
+    gate_set=config.basis_gates
+
+    prop_dict = backend.properties().to_dict()
+    gate_times={}
+
+    # Gate times in ns 
+    for gate in gate_set:
+        gate_times_tmp=[]
+        for j in range(len(prop_dict['gates'])):
+
+            if prop_dict['gates'][j]['gate'] == gate and prop_dict['gates'][j]['gate'] != 'reset':
+                #print(prop_dict['gates'][j]['gate'] )
+                gate_times_tmp.append(prop_dict['gates'][j]['parameters'][1]['value'])
+            gate_times[gate] = round(np.mean(gate_times_tmp),3), round(np.std(gate_times_tmp),3)
+
+            if prop_dict['gates'][j]['gate']==gate and prop_dict['gates'][j]['gate'] == 'reset':
+                gate_times_tmp.append(prop_dict['gates'][j]['parameters'][0]['value'])
+            gate_times[gate] = round(np.mean(gate_times_tmp),3), round(np.std(gate_times_tmp),3)
+
+    return gate_times
+
+
 
 """
 #####################################################################################################
