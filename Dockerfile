@@ -1,32 +1,32 @@
-FROM ubuntu:20.04  
+FROM fedora:34
 
 LABEL author="Hila Safi <hila.safi@siemens.com>"
 
+RUN dnf install -y python3 python3-devel ImageMagick unzip gcc git
 
-ENV DEBIAN_FRONTEND noninteractive
-ENV LANG="C.UTF-8"
-ENV LC_ALL="C.UTF-8"
+RUN adduser arcs && mkdir -p /usr/local/arcs && chown -c arcs /usr/local/arcs
 
-# Install required packages
-RUN apt-get update && apt-get install -y \
-        python3 \
-        python3-pip \
-        graphviz
-
-
-# Add user
-RUN useradd -m -G sudo -s /bin/bash hackathon && echo "arcs:arcs" | chpasswd
-RUN usermod -a -G staff hackathon
 USER arcs
 
-# Add artifacts (from host) to home directory
-ADD --chown=arecs:arcs . /home/arcs/arcs
+RUN python3 -m venv /usr/local/arcs/venv
 
-WORKDIR /home/arcs/arcs
+RUN /usr/local/arcs/venv/bin/pip install --upgrade pip && \
+    /usr/local/arcs/venv/bin/pip install jupyter
 
-# install python packages
-ENV PATH $PATH:/home/arcs/.local/bin
-RUN pip3 install -r requirements.txt
+RUN /usr/local/arcs/venv/bin/pip install arcs
 
-ENTRYPOINT ["./run.sh"]
-CMD ["jupyter"]
+RUN /usr/local/arcs/venv/bin/python -m qat.magics.install
+
+WORKDIR /home/arcs
+
+RUN git clone https://github.com/lfd/arcs2022.git
+
+RUN mkdir -p /home/arcs/arcs_2022
+
+EXPOSE 8888
+
+ENV PATH "/usr/local/arcs/venv/bin/:${PATH}"
+
+COPY Generate_and_extend_IBM-Q_topology.ipynb plot_custom_hardware_maxcut.ipynb run_custom_hardware_maxcut.ipynb run_qaoa_profiler.py /home/arcs/arcs_2022
+
+CMD ["jupyter", "notebook",  "--no-browser", "--ip=0.0.0.0"]
