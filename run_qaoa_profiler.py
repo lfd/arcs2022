@@ -1,3 +1,7 @@
+# Copyright (c) Siemens AG, 2022
+# SPDX-License-Identifier: GPL-2.0
+
+
 import numpy as np
 from scipy.optimize import minimize
 import itertools
@@ -9,12 +13,6 @@ from qiskit.utils import algorithm_globals
 from qiskit.algorithms.optimizers import SLSQP, COBYLA
 
 from qiskit.circuit import Parameter
-from TopologyFunctions import *
-#import os
-#import sys
-#module_path = os.path.abspath(os.path.join('line_profiler'))
-#if module_path not in sys.path:
-#    sys.path.append(module_path)
 
 
 @profile
@@ -126,10 +124,10 @@ def get_simple_circ_qaoa_from_qubo(Q):
 def execute_circ(circ, theta, backend, shots):
 
     gamma_val, beta_val = theta
-
+    
     qc = circ.assign_parameters({circ.parameters[0]: gamma_val, circ.parameters[1]: beta_val})
 
-    job_sim = backend.run(qc, seed_simulator=123, nshots=shots) #no compilation, just execution
+    job_sim = backend.run(qc, seed_simulator=123, nshots=shots)
     counts = job_sim.result().get_counts()
     return counts
 
@@ -174,6 +172,7 @@ shots=10000
 
 backend=Aer.get_backend("qasm_simulator")
 algorithm_globals.random_seed = seed
+optimizer=SLSQP(maxiter=1000)
 params=np.repeat(initial, p)
 
 G = generate_graph_from_density(num_nodes, density)
@@ -181,5 +180,6 @@ H = get_qubo_maxcut(G)
     
 qc = get_simple_circ_qaoa_from_qubo(H)
 qc_compiled = transpile(qc, basis_gates=gate_set, optimization_level=opt_level)
+
 
 res = minimize_qaoa(initial, qc_compiled, backend, shots)
