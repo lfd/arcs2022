@@ -1,4 +1,6 @@
 # coding: utf-8
+# Copyright (c) Siemens AG, 2022
+# SPDX-License-Identifier: GPL-2.0
 
 
 import numpy as np

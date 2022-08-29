@@ -1,19 +1,13 @@
-#!/usr/bin/env python
 # coding: utf-8
+# Copyright (c) Siemens AG, 2022
+# SPDX-License-Identifier: GPL-2.0
+
 
 
 import numpy as np
 import itertools
-import json
-import os
-import pathlib 
-import pickle
-#from iteration_utilities import duplicates, unique_everseen
-
 import networkx as nx
 import collections
-#import pyquil
-
 
 
 
@@ -296,9 +290,6 @@ def create_heavy_hex_IBMQ(n_unit_rows, n_columns):
 
 def get_number_qubits_heavy_hex(n_unit_rows, n_columns):
     return 1 + 4*n_unit_rows + 4*n_columns + 5*n_unit_rows*n_columns
-
-
-#def get_topology_size_from_num_qubits(n_qubits):
 
 
 

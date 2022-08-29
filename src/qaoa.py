@@ -1,4 +1,7 @@
 # coding: utf-8
+# Copyright (c) Siemens AG, 2022
+# SPDX-License-Identifier: GPL-2.0
+
 
 import numpy as np
 import itertools
@@ -76,11 +79,9 @@ def get_simple_circ_qaoa_from_qubo(Q, theta):
         # Problem Hamiltonian 
         for key in tq_gates.keys():  # two-qubit gates
             qc.rzz(2 * gamma[irep] * tq_gates[key][1], tq_gates[key][0][0], tq_gates[key][0][1])
-            #qc.barrier()
             
         for key in sq_gates.keys():  # single-qubit gates
-            qc.rz(2 * gamma[irep] * sq_gates[key][1] , sq_gates[key][0])
-            #qc.barrier()   
+            qc.rz(2 * gamma[irep] * sq_gates[key][1] , sq_gates[key][0]) 
 
         # Mixing Hamiltonian
         for i in range(0, num_qubits):
